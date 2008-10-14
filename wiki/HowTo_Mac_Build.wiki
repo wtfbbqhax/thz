@@ -17,14 +17,14 @@ forward.
  # Open up the _Makefile_ from the our HEAD tremulous revision
   * ====From the THZ Makefile:====
    # Scroll down to the area that says 'SETUP AND BUILD -- MAC OS X'
-   # Delete everything after the string of number signs to the next string of number signs
+   # Delete everything after the string of number signs to the next string of number signs.
   * ====From the HEAD Makefile:====
-   # Scroll down to the area thay says 'SETUP AND BUILD -- MAC OS X'
-   # _Copy/Cut_ everything under the string of number signs to the next string of number signs
-  * ====Back to the thz Makefile:====
+   # Scroll down to the area thay says 'SETUP AND BUILD -- MAC OS X'.
+   # _Copy/Cut_ everything under the string of number signs to the next string of number signs.
+  * ====Back to the THZ Makefile:====
    # Paste the code from the _HEAD Makefile_ where you deleted it from the _THZ Makefile_.
-   # Save the _THZ Makefile_
-  * Trash the HEAD Makefile? ( or whatever you want to do with it )
+   # Save the _THZ Makefile_.
+  * ====Trash the HEAD Makefile ====
  # From the _THZ_ directory replace _make-macosx-ub.sh_ with the one from our _HEAD_ revision.
 
 
