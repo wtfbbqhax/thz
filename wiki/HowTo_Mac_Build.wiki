@@ -1,4 +1,4 @@
-#labels Phase-Deploy
+#labels Phase-Deploy,Featured,Phase-Support
 ==Intro==
 
 As long as you have the necessary tools, building thz-mac client should be fairly straight 
