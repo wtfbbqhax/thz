@@ -1,0 +1,17 @@
+#labels Featured,Phase-Requirements
+= THZ Blend? =
+
+While it is just a mock-name for now, I plan on starting on my branch of the THZ client. 
+
+= Details =
+
+I Plan on:
+  * Revising the client up to a newer revision. Possibly HEAD.
+  * Start on updating client qvm's preparing the code for trem1.2 ( if it comes out )
+  * Various client side mods including several from FSM-Trem such as player cvars, as well as...
+  * Math processing, perhaps WireDDD's.
+
+
+What I do not plan on:
+  * There will be no GUID haxxing.
+  * No destructive hacks, such as overflows and malformed client packets.
