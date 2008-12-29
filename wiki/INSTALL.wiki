@@ -16,7 +16,7 @@
 === Troubleshooting === 
 
   # If you go to a server and you don't have any of the THZ hacks then you may have more than one vms pk3. This had happened to me on my windows client where some server I played on Installed it.
-  # If you go to a server and you get an error saying *_invalid pk3_* then *email me immediately* . This would be a bug that I already understand it may occur in which case I need to rewrite my _Spoofer_
+  #  ~~ If you go to a server and you get an error saying *_invalid pk3_* then *email me immediately* . This would be a bug that I already understand it may occur in which case I need to rewrite my _Spoofer_ ~~ <- This is not an issue
 
 
 === Quick Note ===
