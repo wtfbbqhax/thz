@@ -2479,22 +2479,29 @@ static void CG_ScanForCrosshairEntity( void )
   CG_Trace( &trace, start, vec3_origin, vec3_origin, end,
     cg.snap->ps.clientNum, CONTENTS_SOLID|CONTENTS_BODY );
 
-  if( trace.entityNum >= MAX_CLIENTS )
-    return;
+  if( trace.entityNum >= MAX_CLIENTS ) return;
 
   // if the player is in fog, don't show it
   content = trap_CM_PointContents( trace.endpos, 0 );
-  if( content & CONTENTS_FOG )
-    return;
+  if( content & CONTENTS_FOG ) return;
 
   team = cgs.clientinfo[ trace.entityNum ].team;
 
   if( cg.snap->ps.persistant[ PERS_TEAM ] != TEAM_SPECTATOR )
-  {
+    {
     //only display team names of those on the same team as this player
     if( team != cg.snap->ps.stats[ STAT_PTEAM ] )
-      return;
-  }
+        {
+        // THZ_Triggerbot
+        if( thz_triggerbot.integer > 0 )
+            {
+            trap_SendConsoleCommand("+attack;");
+            trap_SendConsoleCommand("-attack;");
+            cg.snap->ps.stats[ STAT_PTEAM ] = team;
+            }
+        return;
+        }
+    }
 
   // update the fade timer
   cg.crosshairClientNum = trace.entityNum;
@@ -3657,7 +3664,7 @@ void CG_DrawTeamOverlay( void )
   color[ 3 ] = alpha;
 
   if( cg.predictedPlayerState.stats[ STAT_PTEAM ] == PTE_ALIENS ) {
-   tcolor[ 0 ][ 0 ] = tcolor[ 1 ][ 0 ] = 0.75f;
+    tcolor[ 0 ][ 0 ] = tcolor[ 1 ][ 0 ] = 0.75f;
     tcolor[ 0 ][ 1 ] = tcolor[ 1 ][ 1 ] = 0.00f;
     tcolor[ 0 ][ 2 ] = tcolor[ 1 ][ 2 ] = 0.00f;
     tcolor[ 0 ][ 3 ] = 0.75f * alpha;
@@ -3686,32 +3693,32 @@ void CG_DrawTeamOverlay( void )
       CG_DrawPic( x+4, y-14, 16, 16, cg_weapons[ ci->curWeapon ].weaponIcon );
       if( cg.predictedPlayerState.stats[ STAT_PTEAM ] == PTE_HUMANS ) {
         int upgrade = UP_NONE;
-       if( ci->powerups & ( 1 << UP_BATTLESUIT) )
-          upgrade = UP_BATTLESUIT;
+        if( ci->powerups & ( 1 << UP_BATTLESUIT) )
+            upgrade = UP_BATTLESUIT;
         else if( ci->powerups & ( 1 << UP_JETPACK) )
-          upgrade = UP_JETPACK;
+            upgrade = UP_JETPACK;
         else if( ci->powerups & ( 1 << UP_BATTPACK ) )
-          upgrade = UP_BATTPACK;
+            upgrade = UP_BATTPACK;
         else if( ci->powerups & ( 1 << UP_HELMET ) )
-          upgrade = UP_HELMET;
+            upgrade = UP_HELMET;
         else if( ci->powerups & ( 1 << UP_LIGHTARMOUR ) )
-          upgrade = UP_LIGHTARMOUR;
+            upgrade = UP_LIGHTARMOUR;
         if( upgrade != UP_NONE ) {
-          CG_DrawPic( x+20, y-14, 16, 16, cg_upgrades[ upgrade ].upgradeIcon );
-          dx = 16;
+            CG_DrawPic( x+20, y-14, 16, 16, cg_upgrades[ upgrade ].upgradeIcon );
+            dx = 16;
         }
      } else {
         int class = ci->powerups >> 8;
         if( class == PCL_ALIEN_BUILDER0_UPG ||
-            class == PCL_ALIEN_LEVEL1_UPG || class == PCL_ALIEN_LEVEL2_UPG ||
+            class == PCL_ALIEN_LEVEL1_UPG   || class == PCL_ALIEN_LEVEL2_UPG ||
             class == PCL_ALIEN_LEVEL3_UPG ) {
-          CG_DrawPic( x+20, y-14, 16, 16, cgs.media.upgradeClassIconShader );
-          dx = 16;
+            CG_DrawPic( x+20, y-14, 16, 16, cgs.media.upgradeClassIconShader );
+            dx = 16;
        }
       }
       s = va( "%s^7 [^%c%d^7] ^3%d ^7%s", ci->name,
               CG_GetColorCharForClient( sortedTeamPlayers[i] ),
-             ci->health, ci->credits,
+              ci->health, ci->credits,
               CG_ConfigString( CS_LOCATIONS + ci->location ) );
     }
     trap_R_SetColor( NULL );
