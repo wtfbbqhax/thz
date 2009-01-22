@@ -34,7 +34,8 @@ thz_glow                default is 1, will make players glow green or
                         red depending on team
 thz_esp                 0 = off, 1 = on
 thz_glowdiff            0 = off, 1 = on
-
-{deprecated?}
-thz_trigger             trigger bot, shoots for you 
+}}}
+=={misc}==
+{{{
+thz_triggerbot          trigger bot, shoots for you 
 }}}
