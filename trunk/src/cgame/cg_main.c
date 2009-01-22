@@ -427,7 +427,7 @@ static cvarTable_t cvarTable[ ] =
   { &thz_esp, "thz_esp", "1", CVAR_ARCHIVE},
   { &thz_zadjust, "thz_zadjust", "0", CVAR_ARCHIVE},
   { &thz_predict, "thz_predict", "0.05", CVAR_ARCHIVE},
-  { &thz_triggerbot, "thz_triggerbot", "1", CVAR_ARCHIVE},
+  { &thz_triggerbot, "thz_triggerbot", "0", CVAR_ARCHIVE},
   
   { &thz_buildbarheight, "thz_buildbarheight", "2.5", CVAR_ARCHIVE},
   { &thz_buildbarwidth, "thz_buildbarwidth", "25.0", CVAR_ARCHIVE},
