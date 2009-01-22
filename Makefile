@@ -27,11 +27,11 @@ ifeq ($(COMPILE_PLATFORM),mingw32)
   endif
 endif
 
-BUILD_CLIENT     =
-BUILD_CLIENT_SMP =
-BUILD_SERVER     =
-BUILD_GAME_SO    =
-BUILD_GAME_QVM   =
+BUILD_CLIENT     = 0
+BUILD_CLIENT_SMP = 0
+BUILD_SERVER     = 0
+BUILD_GAME_SO    = 0
+BUILD_GAME_QVM   = 1
 
 #############################################################################
 #
