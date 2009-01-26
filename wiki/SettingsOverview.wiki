@@ -37,5 +37,5 @@ thz_glowdiff            0 = off, 1 = on
 }}}
 =={misc}==
 {{{
-thz_triggerbot          trigger bot, shoots for you 
+thz_triggerbot          default is 0 ( off ), autoshooting
 }}}
