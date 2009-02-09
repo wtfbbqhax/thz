@@ -722,20 +722,16 @@ static void CG_OffsetFirstPersonView( void )
 
 void CG_ZoomDown_f( void )
 {
-  if( cg.zoomed )
-    return;
-
+  if( cg.zoomed ) return;
   cg.zoomed = qtrue;
-  cg.zoomTime = cg.time;
+  cg.zoomTime = MIN( cg.time, cg.time + cg.time - cg.zoomTime - ZOOM_TIME );
 }
 
 void CG_ZoomUp_f( void )
 {
-  if( !cg.zoomed )
-    return;
-
+  if( !cg.zoomed ) return;
   cg.zoomed = qfalse;
-  cg.zoomTime = cg.time;
+  cg.zoomTime = MIN( cg.time, cg.time + cg.time - cg.zoomTime - ZOOM_TIME );
 }
 
 
@@ -794,15 +790,17 @@ static int CG_CalcFov( void )
     }
 
     // account for zooms
-    zoomFov = BG_FindZoomFovForWeapon( cg.predictedPlayerState.weapon );
-    if ( zoomFov < 1 )
-      zoomFov = 1;
-    else if ( zoomFov > attribFov )
-      zoomFov = attribFov;
+    //zoomFov = BG_FindZoomFovForWeapon( cg.predictedPlayerState.weapon );
+    //if ( zoomFov < 1 )
+    //  zoomFov = 1;
+    //else if ( zoomFov > attribFov )
+    //  zoomFov = attribFov;
+    zoomFov = cg_zoomFov.value; // 20.0f is same as MD
 
     //TA: only do all the zoom stuff if the client CAN zoom
-    if( BG_WeaponCanZoom( cg.predictedPlayerState.weapon ) )
-    {
+    //THZ:Caffeinated Lets go ahead and remove this
+    //if( BG_WeaponCanZoom( cg.predictedPlayerState.weapon ) )
+    //{
       if ( cg.zoomed )
       {
         f = ( cg.time - cg.zoomTime ) / (float)ZOOM_TIME;
@@ -821,7 +819,7 @@ static int CG_CalcFov( void )
         else
           fov_x = zoomFov + f * ( fov_x - zoomFov );
       }
-    }
+    //}
   }
 
   x = cg.refdef.width / tan( fov_x / 360 * M_PI );
