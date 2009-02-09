@@ -1,6 +1,23 @@
+#labels Featured,Phase-Design
 ==Dumping ground for new Ideas==
 
+<br>
+<br>
+This is the idea scope of things to come, only things that have code on paper will be here.
+
+<br>
+<br>
+
+High Priority:
+||Idea #  || Idea ||Description  ||  Other || Status ||
+|| 1 || FIX AIMBOT || Why is it broken??? || Nothing has changed! || who to blame >.>'' ||
 
 
-||Idea #  || Idea ||Description  ||  Other ||
-|| 1      || Modified Scoreboard || Just some minor tweaks || img502.imageshack.us/my.php?image=shot0011el2.jpg ||
+<br>
+<br>
+
+Low Priority:
+
+||Idea #  || Idea ||Description  ||  Other || Status ||
+|| 1      || Modified Scoreboard || Just some minor tweaks || img502.imageshack.us/my.php?image=shot0011el2.jpg || in works ||
+|| 2      || Kickass Zoom || Zoom with any Weapon any Class || only committed in the source || FINISHED ||
