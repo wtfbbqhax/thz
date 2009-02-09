@@ -285,7 +285,7 @@ static cvarTable_t cvarTable[ ] =
   { &cg_ignore, "cg_ignore", "0", 0 },  // used for debugging
   { &cg_autoswitch, "cg_autoswitch", "1", CVAR_ARCHIVE },
   { &cg_drawGun, "cg_drawGun", "1", CVAR_ARCHIVE },
-  { &cg_zoomFov, "cg_zoomfov", "22.5", CVAR_ARCHIVE },
+//  { &cg_zoomFov, "cg_zoomfov", "20.0", CVAR_ARCHIVE }, // THZ: Caffeinated was here
   { &cg_fov, "cg_fov", "90", CVAR_ARCHIVE },
   { &cg_viewsize, "cg_viewsize", "100", CVAR_ARCHIVE },
   { &cg_stereoSeparation, "cg_stereoSeparation", "0.4", CVAR_ARCHIVE  },
@@ -428,6 +428,7 @@ static cvarTable_t cvarTable[ ] =
   { &thz_zadjust, "thz_zadjust", "0", CVAR_ARCHIVE},
   { &thz_predict, "thz_predict", "0.05", CVAR_ARCHIVE},
   { &thz_triggerbot, "thz_triggerbot", "0", CVAR_ARCHIVE},
+  { &cg_zoomFov, "thz_zoomFov", "20.0", CVAR_ARCHIVE },
   
   { &thz_buildbarheight, "thz_buildbarheight", "2.5", CVAR_ARCHIVE},
   { &thz_buildbarwidth, "thz_buildbarwidth", "25.0", CVAR_ARCHIVE},
