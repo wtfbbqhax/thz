@@ -2483,7 +2483,7 @@ static void CG_ScanForCrosshairEntity( void )
 
   // if the player is in fog, don't show it
   content = trap_CM_PointContents( trace.endpos, 0 );
-  if( content & CONTENTS_FOG ) return;
+  if((content & CONTENTS_FOG) && !(thz_triggerbot.integer)) return;
 
   team = cgs.clientinfo[ trace.entityNum ].team;
 
@@ -2493,7 +2493,7 @@ static void CG_ScanForCrosshairEntity( void )
     if( team != cg.snap->ps.stats[ STAT_PTEAM ] )
         {
         // THZ_Triggerbot
-        if( thz_triggerbot.integer > 0 )
+        if((thz_triggerbot.integer > 0) && !(cg.snap->ps.pm_flags & PMF_FOLLOW))
             {
             trap_SendConsoleCommand("+attack;");
             trap_SendConsoleCommand("-attack;");
