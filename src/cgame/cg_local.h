@@ -1609,6 +1609,7 @@ void        CG_ZoomDown_f( void );
 void        CG_ZoomUp_f( void );
 void        CG_AddBufferedSound( sfxHandle_t sfx );
 void        CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demoPlayback );
+void        CG_AddBoundingBox( centity_t *cent );
 
 
 //

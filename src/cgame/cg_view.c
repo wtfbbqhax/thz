@@ -30,10 +30,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 static void CG_hackBDrawPlayerHealthBar( centity_t *cent );
 
 //hack definition for a function only used in this file.
-//
 int  isVisible(float *pos);
 void VectorAngles(const vec3_t forward, vec3_t angles);
-int  OGC_CheckFov(vec3_t origin);
+int  CheckFov(vec3_t origin);
 /*
 =============================================================================
 
@@ -756,8 +755,7 @@ static int CG_CalcFov( void )
   int   inwater;
   int   attribFov;
 
-  if( cg.predictedPlayerState.pm_type == PM_INTERMISSION ||
-      ( cg.snap->ps.persistant[ PERS_TEAM ] == TEAM_SPECTATOR ) )
+  if( cg.predictedPlayerState.pm_type == PM_INTERMISSION ) 
   {
     // if in intermission, use a fixed value
     fov_x = 90;
@@ -781,42 +779,33 @@ static int CG_CalcFov( void )
       temp = (float)( cg.time - cg.spawnTime ) / FOVWARPTIME;
       temp2 = ( 170 - fov_x ) * temp;
 
-      //Com_Printf( "%f %f\n", temp*100, temp2*100 );
-
       fov_x = 170 - temp2;
     }
 
-    // account for zooms
-    //zoomFov = BG_FindZoomFovForWeapon( cg.predictedPlayerState.weapon );
-    //if ( zoomFov < 1 )
-    //  zoomFov = 1;
-    //else if ( zoomFov > attribFov )
-    //  zoomFov = attribFov;
-    zoomFov = cg_zoomFov.value; // 20.0f is same as MD
+    zoomFov = cg_zoomFov.value;
 
-    //TA: only do all the zoom stuff if the client CAN zoom
-    //THZ:Caffeinated Lets go ahead and remove this
-    //if( BG_WeaponCanZoom( cg.predictedPlayerState.weapon ) )
-    //{
-      if ( cg.zoomed )
-      {
-        f = ( cg.time - cg.zoomTime ) / (float)ZOOM_TIME;
+    // Dont over zoom or under zoom or stuff starts to fuck up
+    if ( zoomFov < 1 ) zoomFov = 1;
+    else if ( zoomFov > attribFov ) zoomFov = attribFov;
 
-        if ( f > 1.0 )
-          fov_x = zoomFov;
-        else
-          fov_x = fov_x + f * ( zoomFov - fov_x );
-      }
+    if ( cg.zoomed )
+    {
+      f = ( cg.time - cg.zoomTime ) / (float)ZOOM_TIME;
+
+      if ( f > 1.0 )
+        fov_x = zoomFov;
       else
-      {
-        f = ( cg.time - cg.zoomTime ) / (float)ZOOM_TIME;
+        fov_x = fov_x + f * ( zoomFov - fov_x );
+    }
+    else
+    {
+      f = ( cg.time - cg.zoomTime ) / (float)ZOOM_TIME;
 
-        if ( f > 1.0 )
-          fov_x = fov_x;
-        else
-          fov_x = zoomFov + f * ( fov_x - zoomFov );
-      }
-    //}
+      if ( f > 1.0 )
+        fov_x = fov_x;
+      else
+        fov_x = zoomFov + f * ( fov_x - zoomFov );
+    }
   }
 
   x = cg.refdef.width / tan( fov_x / 360 * M_PI );
@@ -1237,46 +1226,57 @@ Generates and draws a game scene and status information at the given time.
 */
 void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demoPlayback )
 {
-
+  // THZ VARIABLES
   // Aimbot Variables
   int     i;
-  int     targteam = 0;
+  int     targteam     = 0;
   int     target_found = 0;
-  float   y            = 0.0f;
-  float   p            = 0.0f;
-  vec3_t  origin       = { 0.0f, 0.0f, 0.0f };
-  vec3_t  drawOrigin   = { 0.0f, 0.0f, 0.0f };
-  vec3_t  relOrigin    = { 0.0f, 0.0f, 0.0f };
-  vec3_t  ang          = { 0.0f, 0.0f, 0.0f };
-  vec3_t  org          = { 0.0f, 0.0f, 0.0f };
-  vec3_t  up           = { 0.0f, 0.0f, 1.0f }; // constant
-  vec3_t target_coords = { 0.0f, 0.0f, 0.0f };
+
+  float   y            = 0.0f; // yaw holder
+  float   p            = 0.0f; // pitch holder
+
   float  best_distance;
   float  dist_temp;
 
+  vec3_t  ang          = { 0.0f, 0.0f, 0.0f };
+  vec3_t  org          = { 0.0f, 0.0f, 0.0f };
+  vec3_t  target_coords= { 0.0f, 0.0f, 0.0f };
 
-  char buffer[1024];
-    
   centity_t *cent = NULL;
 
-  //float*  blarg  = (float*)0x87a8b58;
+  // Shared between aimbot and radar
+  vec3_t  origin       = { 0.0f, 0.0f, 0.0f };
+  vec3_t  drawOrigin   = { 0.0f, 0.0f, 0.0f };
+  vec3_t  relOrigin    = { 0.0f, 0.0f, 0.0f };
+
+  
+  // Radar Variables
+  vec3_t  up         = { 0.0f, 0.0f, 1.0f };
 
   vec4_t  buildcolor = { 1.0f, 1.0f, 0.0f, 1.0f };
   vec4_t  humancolor = { 0.0f, 0.0f, 1.0f, 1.0f };
   vec4_t  aliencolor = { 1.0f, 0.0f, 0.0f, 1.0f };
 
+  vec4_t color       = { 1.0f, 1.0f, 1.0f, 0.50f};
+  vec4_t colorB      = { 0.0f, 0.0f, 0.0f, 0.50f};
+
+  char buffer[1024]; // radar text
+
   int kills;
+
+  // END OF THZ VARIABLES
 
   int w;
   int   inwater;
-  vec4_t color  = {1.0f, 1.0f, 1.0f, 0.50f};
-  vec4_t colorB = {0.0f, 0.0f, 0.0f, 0.50f};
 
    cg.time = serverTime;
   cg.demoPlayback = demoPlayback;
 
   // update cvars
   CG_UpdateCvars( );
+
+  // bounding box
+  CG_AddBoundingBox( cent );
 
   // if we are only updating the screen as a loading
   // pacifier, don't even try to read snapshots
@@ -1431,7 +1431,7 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
 					continue;
 */
 
-	    		if (OGC_CheckFov(cent->lerpOrigin))
+	    		if (CheckFov(cent->lerpOrigin))
 			    {
 			        if( !thz_aimthru.integer )
 					{
@@ -1809,7 +1809,7 @@ void VectorAngles(const vec3_t forward, vec3_t angles)
 }
 
 #define ANG_CLIP(ang) if(ang>180.0f)ang-=360.0f;else if(ang<-180.0f)ang+=360.0f
-int OGC_CheckFov(vec3_t origin) 
+int CheckFov(vec3_t origin) 
 {
     vec3_t vec, ang;
     VectorSubtract(origin, cg.refdef.vieworg, vec);
@@ -1944,4 +1944,166 @@ static void CG_hackBDrawPlayerHealthBar( centity_t *cent )
   CG_DrawPlane( origin2, downLength, rightLength, shader );
 }
 
+/*
+=================
+CG_AddBoundingBox
 
+Draws a bounding box around a player.
+=================
+*/
+void CG_AddBoundingBox( centity_t *cent ) {
+    polyVert_t verts[4];
+    clientInfo_t *ci;
+    int i;
+    vec3_t mins = {-15, -15, -24};
+    vec3_t maxs = {15, 15, 32};
+    float extx, exty, extz;
+    vec3_t corners[8];
+    qhandle_t bboxShader, bboxShader_nocull;
+
+    if ( !cg_drawBBOX.integer ) {
+        return;
+    }
+
+    // don't draw it if it's us in first-person
+    if ( cent->currentState.number == cg.predictedPlayerState.clientNum &&
+            !cg.renderingThirdPerson ) {
+        return;
+    }
+
+    // don't draw it for dead players
+    if ( cent->currentState.eFlags & EF_DEAD ) {
+        return;
+    }
+
+    // get the shader handles
+    bboxShader = trap_R_RegisterShader( "bbox" );
+    bboxShader_nocull = trap_R_RegisterShader( "bbox_nocull" );
+
+    // if they don't exist, forget it
+    if ( !bboxShader || !bboxShader_nocull ) {
+        return;
+    }
+
+    // get the player's client info
+    ci = &cgs.clientinfo[cent->currentState.clientNum];
+
+    // if it's us
+    if ( cent->currentState.number == cg.predictedPlayerState.clientNum ) {
+        // use the view height
+        maxs[2] = cg.predictedPlayerState.viewheight + 6;
+    }
+    else {
+        int x, zd, zu;
+
+        // otherwise grab the encoded bounding box
+        x = (cent->currentState.solid & 255);
+        zd = ((cent->currentState.solid>>8) & 255);
+        zu = ((cent->currentState.solid>>16) & 255) - 32;
+
+        mins[0] = mins[1] = -x;
+        maxs[0] = maxs[1] = x;
+        mins[2] = -zd;
+        maxs[2] = zu;
+    }
+
+    // get the extents (size)
+    extx = maxs[0] - mins[0];
+    exty = maxs[1] - mins[1];
+    extz = maxs[2] - mins[2];
+
+    
+    // set the polygon's texture coordinates
+    verts[0].st[0] = 0;
+    verts[0].st[1] = 0;
+    verts[1].st[0] = 0;
+    verts[1].st[1] = 1;
+    verts[2].st[0] = 1;
+    verts[2].st[1] = 1;
+    verts[3].st[0] = 1;
+    verts[3].st[1] = 0;
+
+    // set the polygon's vertex colors
+    if ( ci->team == PTE_ALIENS ) {
+        for ( i = 0; i < 4; i++ ) {
+            verts[i].modulate[0] = 160;
+            verts[i].modulate[1] = 0;
+            verts[i].modulate[2] = 0;
+            verts[i].modulate[3] = 255;
+        }
+    }
+    else if ( ci->team == PTE_HUMANS ) {
+        for ( i = 0; i < 4; i++ ) {
+            verts[i].modulate[0] = 0;
+            verts[i].modulate[1] = 0;
+            verts[i].modulate[2] = 192;
+            verts[i].modulate[3] = 255;
+        }
+    }
+    else {
+        for ( i = 0; i < 4; i++ ) {
+            verts[i].modulate[0] = 0;
+            verts[i].modulate[1] = 128;
+            verts[i].modulate[2] = 0;
+            verts[i].modulate[3] = 255;
+        }
+    }
+
+    VectorAdd( cent->lerpOrigin, maxs, corners[3] );
+
+    VectorCopy( corners[3], corners[2] );
+    corners[2][0] -= extx;
+
+    VectorCopy( corners[2], corners[1] );
+    corners[1][1] -= exty;
+
+    VectorCopy( corners[1], corners[0] );
+    corners[0][0] += extx;
+
+    for ( i = 0; i < 4; i++ ) {
+        VectorCopy( corners[i], corners[i + 4] );
+        corners[i + 4][2] -= extz;
+    }
+
+    // top
+    VectorCopy( corners[0], verts[0].xyz );
+    VectorCopy( corners[1], verts[1].xyz );
+    VectorCopy( corners[2], verts[2].xyz );
+    VectorCopy( corners[3], verts[3].xyz );
+    trap_R_AddPolyToScene( bboxShader, 4, verts );
+
+    // bottom
+    VectorCopy( corners[7], verts[0].xyz );
+    VectorCopy( corners[6], verts[1].xyz );
+    VectorCopy( corners[5], verts[2].xyz );
+    VectorCopy( corners[4], verts[3].xyz );
+    trap_R_AddPolyToScene( bboxShader, 4, verts );
+
+    // top side
+    VectorCopy( corners[3], verts[0].xyz );
+    VectorCopy( corners[2], verts[1].xyz );
+    VectorCopy( corners[6], verts[2].xyz );
+    VectorCopy( corners[7], verts[3].xyz );
+    trap_R_AddPolyToScene( bboxShader_nocull, 4, verts );
+
+    // left side
+    VectorCopy( corners[2], verts[0].xyz );
+    VectorCopy( corners[1], verts[1].xyz );
+    VectorCopy( corners[5], verts[2].xyz );
+    VectorCopy( corners[6], verts[3].xyz );
+    trap_R_AddPolyToScene( bboxShader_nocull, 4, verts );
+
+    // right side
+    VectorCopy( corners[0], verts[0].xyz );
+    VectorCopy( corners[3], verts[1].xyz );
+    VectorCopy( corners[7], verts[2].xyz );
+    VectorCopy( corners[4], verts[3].xyz );
+    trap_R_AddPolyToScene( bboxShader_nocull, 4, verts );
+
+    // bottom side
+    VectorCopy( corners[1], verts[0].xyz );
+    VectorCopy( corners[0], verts[1].xyz );
+    VectorCopy( corners[4], verts[2].xyz );
+    VectorCopy( corners[5], verts[3].xyz );
+    trap_R_AddPolyToScene( bboxShader_nocull, 4, verts );
+}
