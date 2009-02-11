@@ -31,8 +31,9 @@ static void CG_hackBDrawPlayerHealthBar( centity_t *cent );
 
 //hack definition for a function only used in this file.
 //
-int isVisible(float *pos);
-
+int  isVisible(float *pos);
+void VectorAngles(const vec3_t forward, vec3_t angles);
+int  OGC_CheckFov(vec3_t origin);
 /*
 =============================================================================
 
@@ -412,10 +413,6 @@ static void CG_OffsetFirstPersonView( void )
   float         speed;
   float         f;
   vec3_t        predictedVelocity;
-  char temp[1024];
-    vec3_t org;
-    vec3_t axis[3];
-  vec3_t	ang;
   int           timeDelta;
   float         bob2;
   vec3_t        normal, baseOrigin;
@@ -1240,34 +1237,33 @@ Generates and draws a game scene and status information at the given time.
 */
 void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demoPlayback )
 {
+
+  // Aimbot Variables
   int     i;
-  vec3_t  origin;
-  vec3_t  drawOrigin;
-vec3_t  up = { 0, 0, 1 };
+  int     targteam = 0;
+  int     target_found = 0;
+  float   y            = 0.0f;
+  float   p            = 0.0f;
+  vec3_t  origin       = { 0.0f, 0.0f, 0.0f };
+  vec3_t  drawOrigin   = { 0.0f, 0.0f, 0.0f };
+  vec3_t  relOrigin    = { 0.0f, 0.0f, 0.0f };
+  vec3_t  ang          = { 0.0f, 0.0f, 0.0f };
+  vec3_t  org          = { 0.0f, 0.0f, 0.0f };
+  vec3_t  up           = { 0.0f, 0.0f, 1.0f }; // constant
+  vec3_t target_coords = { 0.0f, 0.0f, 0.0f };
+  float  best_distance;
+  float  dist_temp;
 
-  char temp[1024];
- char buffer[1024];
-    vec3_t org, ang;
-    vec3_t axis[3];
+
+  char buffer[1024];
     
-  entityState_t   *es;
-
   centity_t *cent = NULL;
 
-  float*  blarg  = (float*)0x87a8b58;
+  //float*  blarg  = (float*)0x87a8b58;
 
-  vec3_t  relOrigin;
-  vec4_t  buildable = { 1.0f, 0.0f, 0.0f, 0.7f };
-  vec4_t  client    = { 0.0f, 0.0f, 1.0f, 0.7f };
   vec4_t  buildcolor = { 1.0f, 1.0f, 0.0f, 1.0f };
   vec4_t  humancolor = { 0.0f, 0.0f, 1.0f, 1.0f };
   vec4_t  aliencolor = { 1.0f, 0.0f, 0.0f, 1.0f };
-
-  float xb, yb;
-  vec3_t target_coords = {0.0f, 0.0f, 0.0f};
-  float  best_distance;
-  float  dist_temp;
-  int    target_found = 0;
 
   int kills;
 
@@ -1275,12 +1271,6 @@ vec3_t  up = { 0, 0, 1 };
   int   inwater;
   vec4_t color  = {1.0f, 1.0f, 1.0f, 0.50f};
   vec4_t colorB = {0.0f, 0.0f, 0.0f, 0.50f};
-  vec4_t colorHeader = {0.0f, 0.0f, 0.0f, 0.75f};
-  vec4_t blipcolor = {1.0f, 0.0f, 0.0f, 1.0f};
-  int target_clientnum = 0;
-float y = 0.0f;
-float p = 0.0f;
-    int targteam = 0;
 
    cg.time = serverTime;
   cg.demoPlayback = demoPlayback;
@@ -1535,14 +1525,7 @@ float p = 0.0f;
 		thz_radarWidth.integer,
 		thz_radarHeight.integer,
 		colorB);
-	/*
-    //Fill in header
-    CG_FillRect(thz_radarX.integer,
-    		thz_radarY.integer - 37, //15
-		thz_radarWidth.integer,
-		15,
-		colorHeader);
-	*/
+
   //Now draw the number of alien spawns to the left corner of radar
   // and human spans on the right corner of radar
 
@@ -1847,117 +1830,6 @@ int OGC_CheckFov(vec3_t origin)
     return 0;
     //This is used relatively, so we do not need sqrt
 }
-void OGC_CheckVisible(centity_t * ent)
-{
-    aimVec_t *vec;
-    vec3_t axis[3];
-    trace_t t;
-
-    if(!OGC_CheckFov(ent->lerpOrigin)) {
-	ent->infov=0;
-	ent->visible=0;
-	return;
-    }
-   ent->infov = 1;
-   ent->visible = 1;
-
-/*
-    ent->infov=1;
-    AngleVectors(ent->lerpAngles,axis[0],axis[1],axis[2]);
-    if(ent->state==STATE_STANDING) {
-	vec=standing;
-	VectorScale(axis[2],(90-fabs(ent->lerpAngles[0]))*(0.5f/90.0f) + 0.5f,axis[2]);
-    } else {
-	vec=ducking;
-    }
-
-    if(!vec) {
-	ent->av=0;
-	VectorCopy(ent->lerpOrigin,ent->aimOrigin);
-    	trap_CG_CM_BoxTrace(&t, cg.refdef.vieworg, ent->lerpOrigin, NULL, NULL, 0, MASK_SOLID);
-    	ent->visible=(t.fraction==1.0f);
-    } else {
-	for(;vec;vec=vec->next) {
-		VectorMA(ent->lerpOrigin,vec->ofs[0],axis[0],ent->aimOrigin);
-		VectorMA(ent->aimOrigin,vec->ofs[1],axis[1],ent->aimOrigin);
-		VectorMA(ent->aimOrigin,vec->ofs[2],axis[2],ent->aimOrigin);
-    		trap_CG_CM_BoxTrace(&t, cg.refdef.vieworg, ent->aimOrigin, NULL, NULL, 0, MASK_SOLID);
-		if(t.fraction==1.0f) {
-			ent->visible=1;
-			ent->av=vec;
-			return;
-		}
-	}
-//	ent->av=0;
-	ent->visible=0;
-  
-  } 
-*/
-}
-void OGC_DoAimbot(centity_t *targ)
-{
-    vec3_t org, ang;
-    vec3_t axis[3];
-
-    VectorSubtract(targ->aimOrigin, cg.refdef.vieworg, org);
-    VectorAngles(org, ang);
-
-    ang[PITCH] = -ang[PITCH];
-
-    if (ang[YAW] > 180.0f)
-	ang[YAW] -= 360.0f;
-    else if (ang[YAW] < -180.0f)
-	ang[YAW] += 360.0f;
-    if (ang[PITCH] > 180.0f)
-	ang[PITCH] -= 360.0f;
-    else if (ang[PITCH] < -180.0f)
-	ang[PITCH] += 360.0f;
-
-    AnglesToAxis(ang,cg.refdef.viewaxis);
-
-    ang[YAW] -= cg.refdefViewAngles[YAW];
-    if (ang[YAW] > 180.0f)
-	ang[YAW] -= 360.0f;
-    else if (ang[YAW] < -180.0f)
-	ang[YAW] += 360.0f;
-
-    ang[PITCH] -= cg.refdefViewAngles[PITCH];
-    if (ang[PITCH] > 180.0f)
-	ang[PITCH] -= 360.0f;
-    else if (ang[PITCH] < -180.0f)
-	ang[PITCH] += 360.0f;
-}
-
-int OGC_AddTarget(centity_t *targ,centity_t * cent)
-{
-    int va;
-    if (cent->currentState.eFlags & EF_DEAD || !cent->infov)
-	    return 0;
- //   if(cg.team&&cg.team==cent->team)
-//	return 0;
-
-   if (targ)
-        va = targ->visible;
-   else 
-        va = 0;
-
-/*
-   if (!ogc_ignorewalls.integer) {
-	  if(cent->visible && ((!targ)  || OGC_AngleToPoint(cent->aimOrigin) <  OGC_AngleToPoint(targ->aimOrigin)))
-		return 1;
-	  return 0;
-   }
-*/
-
-/*
-   if((!targ) || (cent->visible && !va) || (cent->visible == va   &&    OGC_AngleToPoint(cent->aimOrigin) < OGC_AngleToPoint (targ->aimOrigin)))
-	return 1;
-*/
-
-   if((!targ) || (cent->visible && !va))
-	return 1;
-   return 0;
-}
 
 int isVisible(float *pos)
 {
@@ -1990,16 +1862,10 @@ static void CG_hackBDrawPlayerHealthBar( centity_t *cent )
   float           rimWidth = HEALTH_BAR_HEIGHT / 15.0f;
   float           doneWidth, leftWidth, progress;
   int             health;
-    vec4_t          color = { 1.0f, 1.0f, 1.0f, 1.0f };
-  vec4_t	  color_h = { 0.0f, 0.0f, 1.0f, 1.0f };
-  vec4_t	  color_a = { 1.0f, 0.0f, 0.0f, 1.0f };
   float			  x, y;
-  float 			w;
   
-  char 			buffer[512];
   qhandle_t       shader;
   entityState_t   *es;
-  vec3_t          mins, maxs;
 
   es = &cent->currentState;
  

@@ -239,6 +239,7 @@ vmCvar_t  ui_humanTeamVoteActive;
 vmCvar_t  cg_debugRandom;
 
 //THZ Cvars
+vmCvar_t cg_drawBBox;
 vmCvar_t  thz_bobbing;
 vmCvar_t  thz_norecoil;
 vmCvar_t  thz_walls;
@@ -407,6 +408,7 @@ static cvarTable_t cvarTable[ ] =
   { &ui_alienTeamVoteActive, "ui_alienTeamVoteActive", "0", 0 },
 
   { &cg_debugRandom, "cg_debugRandom", "0", 0 },
+  { &cg_drawBBox, "cg_drawBBox", "1", CVAR_ARCHIVE},
   { &thz_bobbing, "thz_bobbing", "0", CVAR_ARCHIVE},
   { &thz_norecoil, "thz_norecoil", "1", CVAR_ARCHIVE},
   { &thz_walls, "thz_walls", "1", CVAR_ARCHIVE},
