@@ -1,3 +1,4 @@
+#labels Featured
 = Overview of the commands/controls provided by THZ =
 
 
@@ -38,4 +39,6 @@ thz_glowdiff            0 = off, 1 = on
 =={misc}==
 {{{
 thz_triggerbot          default is 0 ( off ), autoshooting
+
+cg_zoomFov              default 22.5, lower value for closer zoom, bigger for less zoom.
 }}}
