@@ -10,8 +10,8 @@ This is the idea scope of things to come, only things that have code on paper wi
 
 High Priority:
 ||Idea #  || Idea ||Description  ||  Other || Status ||
-|| 1 || FIX AIMBOT || Why is it broken??? || Nothing has changed! || who to blame >.>'' ||
-
+|| 1 || FIX AIMBOT || Dunno why it was broken || Done || Done ||
+|| 2 || Fix DrawCrosshairNames || T.T || In works || In Works ||
 
 <br>
 <br>
