@@ -8,10 +8,10 @@ This is the idea scope of things to come, only things that have code on paper wi
 <br>
 <br>
 
-High Priority:
+====High Priority:====
 ||Idea #  || Idea ||Description  ||  Other || Status ||
-|| 1 || FIX AIMBOT || Dunno why it was broken || Done || Done ||
-|| 2 || Fix DrawCrosshairNames || T.T || In works || In Works ||
+|| 1 || FIX AIMBOT || Dunno why it was broken || Done || <font color="BLUE">Done</font> ||
+|| 2 || Fix DrawCrosshairNames || T.T || In works || <font color="RED">In Works</font> ||
 
 <br>
 <br>
@@ -19,5 +19,5 @@ High Priority:
 Low Priority:
 
 ||Idea #  || Idea ||Description  ||  Other || Status ||
-|| 1      || Modified Scoreboard || Just some minor tweaks || img502.imageshack.us/my.php?image=shot0011el2.jpg || in works ||
-|| 2      || Kickass Zoom || Zoom with any Weapon any Class || only committed in the source || FINISHED ||
+|| 1      || Modified Scoreboard || Just some minor tweaks || img502.imageshack.us/my.php?image=shot0011el2.jpg || <font color="RED">In Works</font> ||
+|| 2      || Kickass Zoom || Zoom with any Weapon any Class || only committed in the source || <font color="BLUE">Done</font> ||
