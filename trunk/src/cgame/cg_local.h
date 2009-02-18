@@ -1556,7 +1556,6 @@ extern  vmCvar_t    thz_esp; // 0 = off, 1 = on
 extern  vmCvar_t    thz_zadjust; //default is 0
 extern  vmCvar_t    thz_predict;
 extern  vmCvar_t    thz_triggerbot; //default is 1 == on, (0 == off)
-//extern  vmCvar_t    thz_zoomFov; // 20.0 same as Mass Driver
 extern  vmCvar_t    thz_diffglow; //Glow differently if behind a wall...
 
 extern  vmCvar_t	thz_buildbarheight; //default 5.0f
@@ -1609,7 +1608,6 @@ void        CG_ZoomDown_f( void );
 void        CG_ZoomUp_f( void );
 void        CG_AddBufferedSound( sfxHandle_t sfx );
 void        CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demoPlayback );
-void        CG_AddBoundingBox( centity_t *cent );
 
 
 //
