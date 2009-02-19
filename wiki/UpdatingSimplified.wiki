@@ -1,0 +1,22 @@
+#labels Featured,Phase-Support
+#How to update your THZ Client + QVM set
+
+= Updating Your QVM set =
+
+If you use the THZ Client for aimbot compatibility you can also easily update your
+QVM files.
+
+ # go to Downloads
+ # Download the file THZ-QVMs.zip
+ # Unzip the Archive
+ # Replace existing vm folder and files with the new folder and files
+ # Done
+
+
+This is in place so that the THZ Client doesn't need to be repackaged each 
+time we have a mediocre update.
+
+
+
+Happy hacking,
+Caffeinated
