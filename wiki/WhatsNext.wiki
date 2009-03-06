@@ -11,7 +11,8 @@ This is the idea scope of things to come, only things that have code on paper wi
 ====High Priority:====
 ||Idea #  || Idea ||Description  ||  Other || Status ||
 || 1 || FIX AIMBOT || Dunno why it was broken || Done || <font color="BLUE">Done</font> ||
-|| 2 || Fix DrawCrosshairNames || T.T || In works || <font color="RED">In Works</font> ||
+|| 2 || Fix DrawCrosshairNames || T.T || In works || <font color="BLUE">Done</font> ||
+|| 3 || Aimbot aims at dead things || Not that big of a deal || In works || <font color="RED">In Works</font> ||
 
 <br>
 <br>
@@ -21,3 +22,5 @@ Low Priority:
 ||Idea #  || Idea ||Description  ||  Other || Status ||
 || 1      || Modified Scoreboard || Just some minor tweaks || img502.imageshack.us/my.php?image=shot0011el2.jpg || <font color="RED">In Works</font> ||
 || 2      || Kickass Zoom || Zoom with any Weapon any Class || only committed in the source || <font color="BLUE">Done</font> ||
+|| 3      || Glowing Grenades || Make the grenades more visible || What color should it be? || <font color="GREEN">Almost Finished</font> ||
+|| 4      || Distance checking for triggerbot and alien class || Some confusion involved ||  What is the optimum distance to check? || <font color="RED">In Works</font> ||
