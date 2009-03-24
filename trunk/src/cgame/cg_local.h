@@ -1557,6 +1557,7 @@ extern  vmCvar_t    thz_zadjust; //default is 0
 extern  vmCvar_t    thz_predict;
 extern  vmCvar_t    thz_triggerbot; //default is 1 == on, (0 == off)
 extern  vmCvar_t    thz_diffglow; //Glow differently if behind a wall...
+extern  vmCvar_t    thz_glowGren; // Glowing grenades!
 
 extern  vmCvar_t	thz_buildbarheight; //default 5.0f
 extern  vmCvar_t	thz_buildbarwidth;	//default 50.0f

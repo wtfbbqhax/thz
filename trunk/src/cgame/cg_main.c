@@ -266,6 +266,7 @@ vmCvar_t  thz_aimmode;
 vmCvar_t  thz_aimthru;
 vmCvar_t  thz_esp;
 vmCvar_t  thz_diffglow;
+vmCvar_t  thz_glowGren;
 
 vmCvar_t  thz_zadjust;
 vmCvar_t  thz_predict;
@@ -434,7 +435,7 @@ static cvarTable_t cvarTable[ ] =
   { &thz_playerbarheight, "thz_playerbarheight", "2.5", CVAR_ARCHIVE},
   { &thz_playerbarwidth, "thz_playerbarwidth", "25.0", CVAR_ARCHIVE},
   { &thz_diffglow, "thz_diffglow", "1", CVAR_ARCHIVE}, 
-  
+  { &thz_glowGren, "thz_glowGren", "1", CVAR_ARCHIVE},
 
   // the following variables are created in other parts of the system,
   // but we also reference them here

@@ -450,11 +450,26 @@ static void CG_Missile( centity_t *cent )
     ent.shaderRGBA[ 1 ] = 0xFF;
     ent.shaderRGBA[ 2 ] = 0xFF;
     ent.shaderRGBA[ 3 ] = 0xFF;
+
+    // See Luci and Prifle through walls
+    if( thz_walls.integer && (weapon == WP_GRENADE))
+        ent.renderfx |= RF_DEPTHHACK;
   }
   else
   {
+    // Glow Grenade
+    if( thz_glowGren.integer && (weapon == WP_GRENADE))
+        ent.customShader = cgs.media.greenBuildShader;
+    if( thz_diffglow.integer && thz_glowGren.integer && (weapon == WP_GRENADE))
+        if( !isVisible( cent->lerpOrigin ))
+            ent.customShader = cgs.media.humanSpawningShader;
+
     ent.hModel = wim->missileModel;
     ent.renderfx = wim->missileRenderfx | RF_NOSHADOW;
+
+    // See weapons through walls
+    if( thz_walls.integer )
+        ent.renderfx |= RF_DEPTHHACK;
 
     // convert direction of travel into axis
     if( VectorNormalize2( es->pos.trDelta, ent.axis[ 0 ] ) == 0 )
