@@ -1239,50 +1239,34 @@ Generates and draws a game scene and status information at the given time.
 */
 void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demoPlayback )
 {
-  int     i;
-  vec3_t  origin;
-  vec3_t  drawOrigin;
-vec3_t  up = { 0, 0, 1 };
+    int     i;
+    vec3_t  origin      = {0.0f, 0.0f, 0.0f};
+    vec3_t  relOrigin   = {0.0f, 0.0f, 0.0f};
+    vec3_t  drawOrigin  = {0.0f, 0.0f, 0.0f};
 
-  char temp[1024];
- char buffer[1024];
-    vec3_t org, ang;
-    vec3_t axis[3];
-    
-  entityState_t   *es;
+    vec3_t target_coords = {0.0f, 0.0f, 0.0f};
 
-  centity_t *cent = NULL;
-
-  float*  blarg  = (float*)0x87a8b58;
-
-  vec3_t  relOrigin;
-  vec4_t  buildable = { 1.0f, 0.0f, 0.0f, 0.7f };
-  vec4_t  client    = { 0.0f, 0.0f, 1.0f, 0.7f };
-  vec4_t  buildcolor = { 1.0f, 1.0f, 0.0f, 1.0f };
-  vec4_t  humancolor = { 0.0f, 0.0f, 1.0f, 1.0f };
-  vec4_t  aliencolor = { 1.0f, 0.0f, 0.0f, 1.0f };
-
-  float xb, yb;
-  vec3_t target_coords = {0.0f, 0.0f, 0.0f};
-  float  best_distance;
-  float  dist_temp;
-  int    target_found = 0;
-
-  int kills;
-
-  int w;
-  int   inwater;
-  vec4_t color  = {1.0f, 1.0f, 1.0f, 0.50f};
-  vec4_t colorB = {0.0f, 0.0f, 0.0f, 0.50f};
-  vec4_t colorHeader = {0.0f, 0.0f, 0.0f, 0.75f};
-  vec4_t blipcolor = {1.0f, 0.0f, 0.0f, 1.0f};
-  int target_clientnum = 0;
-float y = 0.0f;
-float p = 0.0f;
+    int    target_found = 0;
     int targteam = 0;
 
+    float  dist_temp;
+    float  best_distance;
+
+    float y = 0.0f, p = 0.0f;
+
+    vec3_t org = {0.0f, 0.0f, 0.0f};
+    vec3_t ang = {0.0f, 0.0f, 0.0f};
+
+    vec3_t axis[3];
+    
+    entityState_t   *es;
+
+    centity_t *cent = NULL;
+
+    int   inwater;
+
    cg.time = serverTime;
-  cg.demoPlayback = demoPlayback;
+   cg.demoPlayback = demoPlayback;
 
   // update cvars
   CG_UpdateCvars( );
@@ -1523,280 +1507,13 @@ float p = 0.0f;
   if( cg_stats.integer )
     CG_Printf( "cg.clientFrame:%i\n", cg.clientFrame );
 
-
-
-  if( thz_radar.integer ) {
-  
-  
-    //Fill background first
-    CG_FillRect(thz_radarX.integer,
-    		thz_radarY.integer,
-		thz_radarWidth.integer,
-		thz_radarHeight.integer,
-		colorB);
-	/*
-    //Fill in header
-    CG_FillRect(thz_radarX.integer,
-    		thz_radarY.integer - 37, //15
-		thz_radarWidth.integer,
-		15,
-		colorHeader);
-	*/
-  //Now draw the number of alien spawns to the left corner of radar
-  // and human spans on the right corner of radar
-
- //Style 1
-  if (thz_radar.integer == 1) {	
-  
-  	//Alien specific coding
-  	
-	Com_sprintf( buffer, MAX_STRING_CHARS, "%d eggs", cgs.numAlienSpawns );
-	w = CG_Text_Width( buffer, 0.25f, 0 );
-	CG_Text_Paint( thz_radarX.integer + 3, thz_radarY.integer - 33, 0.25f, aliencolor, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED );
-
-	Com_sprintf( buffer, MAX_STRING_CHARS, "%d stage", cgs.alienStage + 1 );
-	w = CG_Text_Width( buffer, 0.25f, 0 );
-	CG_Text_Paint( thz_radarX.integer + 3, thz_radarY.integer - 22, 0.25f, aliencolor, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED );
-	
-	kills = abs(cgs.alienNextStageThreshold - cgs.alienKills);
-	Com_sprintf( buffer, MAX_STRING_CHARS, "%d kns", kills );
-	w = CG_Text_Width( buffer, 0.25f, 0 );
-	CG_Text_Paint( thz_radarX.integer + 3, thz_radarY.integer - 11, 0.25f, aliencolor, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED );
-	
-	
-	//Human Specific Coding
-	
-	Com_sprintf( buffer, MAX_STRING_CHARS, "%d nodes", cgs.numHumanSpawns );
-	w = CG_Text_Width( buffer, 0.25f, 0 );
-	CG_Text_Paint( thz_radarX.integer + 45, thz_radarY.integer - 33, 0.25f, buildcolor, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED );
-	
-	
-	Com_sprintf( buffer, MAX_STRING_CHARS, "%d stage", cgs.humanStage + 1 );
-	w = CG_Text_Width( buffer, 0.25f, 0 );
-	CG_Text_Paint( thz_radarX.integer + 45, thz_radarY.integer - 22, 0.25f, buildcolor, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED );
-
-	kills = abs(cgs.humanNextStageThreshold - cgs.humanKills);
-	Com_sprintf( buffer, MAX_STRING_CHARS, "%d kns", kills );
-	w = CG_Text_Width( buffer, 0.25f, 0 );
-	CG_Text_Paint( thz_radarX.integer + 45, thz_radarY.integer - 11, 0.25f, buildcolor, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED );						
-  }
-
-//No more style2... never used it
+}
 
 /*
-  else if (thz_radar.integer == 2) //style 2
-  {
-	Com_sprintf( buffer, MAX_STRING_CHARS, "%d", cgs.numAlienSpawns );
-	w = CG_Text_Width( buffer, 0.25f, 0 );
-	CG_Text_Paint( thz_radarX.integer + 3, thz_radarY.integer - 3, 0.25f, aliencolor, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED );
-	
-	Com_sprintf( buffer, MAX_STRING_CHARS, "%d", cgs.numHumanSpawns );
-	w = CG_Text_Width( buffer, 0.25f, 0 );
-	CG_Text_Paint( thz_radarX.integer + 16, thz_radarY.integer - 3, 0.25f, buildcolor, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED );
-
-
-  }
+==============
+Vector Angles
+==============
 */
-	//Com_sprintf( buffer, MAX_STRING_CHARS, "%d targ", targteam );
-	//w = CG_Text_Width( buffer, 0.25f, 0 );
-	//CG_Text_Paint( thz_radarX.integer + 65, thz_radarY.integer - 3, 0.25f, aliencolor, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED );
-
-    //Now lines
-    CG_FillRect(thz_radarX.integer + (thz_radarWidth.integer / 2),
-    		thz_radarY.integer,
-		1,
-		thz_radarHeight.integer,
-		color);
-
-    CG_FillRect(thz_radarX.integer,
-    		thz_radarY.integer + (thz_radarHeight.integer /2 ),
-		thz_radarHeight.integer,
-		1,
-		color);
-    
-    CG_UpdateEntityPositions();
-
-    //Now actual blips
-    VectorCopy( entityPositions.origin, origin );
-
-    //draw human buildables
-    for( i = 0; i < entityPositions.numHumanBuildables; i++ )
-    {     
-    
-        VectorClear( relOrigin );
-      VectorSubtract( entityPositions.humanBuildablePos[ i ], origin, relOrigin );
-
-      if( VectorLength( relOrigin ) < thz_radarrange.integer )
-      {
-      //CG_DrawDir( rect, relOrigin, buildable );
-      //blip me
-      // x = relOrigin[0] / thz_radarrange.integer
-      //
-      RotatePointAroundVector( drawOrigin, up, relOrigin, -entityPositions.vangles[ 1 ] - 90 );
- 
-      drawOrigin[ 0 ] /= ( (float)(1.25f * (float)thz_radarrange.integer) / (float)thz_radarWidth.integer);
-      drawOrigin[ 1 ] /= ( (float)(1.25f * (float)thz_radarrange.integer) / (float)thz_radarHeight.integer);
-      drawOrigin[ 2 ] /= ( (float)(1.25f * (float)thz_radarrange.integer) / (float)thz_radarWidth.integer);
-
-      //Com_sprintf(temp, 1024, "draw [%f, %f, %f]\n", drawOrigin[0], drawOrigin[1], drawOrigin[2]);
-      //trap_Print(temp);
-
-      CG_FillRect( thz_radarX.integer + 
-                      (thz_radarWidth.integer / 2) + 
-		      (-drawOrigin[0] /*/ thz_radarrange.integer*/),
-      		   thz_radarY.integer + 
-		      (thz_radarHeight.integer / 2) + 
-		      (drawOrigin[1] /*/ thz_radarrange.integer*/),
-		   4,
-		   4,
-		   buildcolor );
-      }
-    }//for
-    
-    //draw human players
-    for( i = 0; i < entityPositions.numHumanClients; i++ )
-    {     
-
-    
-        VectorClear( relOrigin );
-      VectorSubtract( entityPositions.humanClientPos[ i ], origin, relOrigin );
-
-      if( VectorLength( relOrigin ) < thz_radarrange.integer )
-      {
-      //CG_DrawDir( rect, relOrigin, buildable );
-      //blip me
-      // x = relOrigin[0] / thz_radarrange.integer
-      //
-      RotatePointAroundVector( drawOrigin, up, relOrigin, -entityPositions.vangles[ 1 ] - 90 );
- 
-      drawOrigin[ 0 ] /= ( (float)( 1.25f * (float)thz_radarrange.integer) / (float)thz_radarWidth.integer);
-      drawOrigin[ 1 ] /= ( (float)( 1.25f * (float)thz_radarrange.integer) / (float)thz_radarHeight.integer);
-      drawOrigin[ 2 ] /= ( (float)( 1.25f * (float)thz_radarrange.integer) / (float)thz_radarWidth.integer);
-
-      //Com_sprintf(temp, 1024, "draw [%f, %f, %f]\n", drawOrigin[0], drawOrigin[1], drawOrigin[2]);
-      //trap_Print(temp);
-
-      CG_FillRect( thz_radarX.integer + 
-                      (thz_radarWidth.integer / 2) + 
-		      (-drawOrigin[0] /*/ thz_radarrange.integer*/),
-      		   thz_radarY.integer + 
-		      (thz_radarHeight.integer / 2) + 
-		      (drawOrigin[1] /*/ thz_radarrange.integer*/),
-		   2,
-		   2,
-		   humancolor );
-      }
-    }//for
-
-    
-    //draw alien buildables
-    for( i = 0; i < entityPositions.numAlienBuildables ; i++ )
-    {
-      VectorClear( relOrigin );
-      VectorSubtract( entityPositions.alienBuildablePos[ i ], origin, relOrigin );
-
-      if( VectorLength( relOrigin ) < thz_radarrange.integer )
-      {
-      //CG_DrawDir( rect, relOrigin, buildable );
-      //blip me
-      // x = relOrigin[0] / thz_radarrange.integer
-      //
-      RotatePointAroundVector( drawOrigin, up, relOrigin, -entityPositions.vangles[ 1 ] - 90 );
- 
-      drawOrigin[ 0 ] /= ( (float)( 1.25f * (float)thz_radarrange.integer) / (float)thz_radarWidth.integer);
-      drawOrigin[ 1 ] /= ( (float)( 1.25f * (float)thz_radarrange.integer) / (float)thz_radarHeight.integer);
-      drawOrigin[ 2 ] /= ( (float)( 1.25f * (float)thz_radarrange.integer) / (float)thz_radarWidth.integer);
-
-      //Com_sprintf(temp, 1024, "draw [%f, %f, %f]\n", drawOrigin[0], drawOrigin[1], drawOrigin[2]);
-      //trap_Print(temp);
-
-      CG_FillRect( thz_radarX.integer + 
-                      (thz_radarWidth.integer / 2) + 
-		      (-drawOrigin[0] /*/ thz_radarrange.integer*/),
-      		   thz_radarY.integer + 
-		      (thz_radarHeight.integer / 2) + 
-		      (drawOrigin[1] /*/ thz_radarrange.integer*/),
-		   4,
-		   4,
-		   buildcolor);
-      }
-    }//for
-
-    //draw alien clients
-    for( i = 0; i < entityPositions.numAlienClients; i++ )
-    {
-      VectorClear( relOrigin );
-      VectorSubtract( entityPositions.alienClientPos[ i ], origin, relOrigin );
-
-      if( VectorLength( relOrigin ) < thz_radarrange.integer )
-      {
-      //CG_DrawDir( rect, relOrigin, buildable );
-      //blip me
-      // x = relOrigin[0] / thz_radarrange.integer
-      //
-      RotatePointAroundVector( drawOrigin, up, relOrigin, -entityPositions.vangles[ 1 ] - 90 );
- 
-      drawOrigin[ 0 ] /= ( (float)( 1.25f * (float)thz_radarrange.integer) / (float)thz_radarWidth.integer);
-      drawOrigin[ 1 ] /= ( (float)( 1.25f * (float)thz_radarrange.integer) / (float)thz_radarHeight.integer);
-      drawOrigin[ 2 ] /= ( (float)( 1.25f * (float)thz_radarrange.integer) / (float)thz_radarWidth.integer);
-
-      //Com_sprintf(temp, 1024, "draw [%f, %f, %f]\n", drawOrigin[0], drawOrigin[1], drawOrigin[2]);
-      //trap_Print(temp);
-
-      CG_FillRect( thz_radarX.integer + 
-                      (thz_radarWidth.integer / 2) + 
-		      (-drawOrigin[0] /*/ thz_radarrange.integer*/),
-      		   thz_radarY.integer + 
-		      (thz_radarHeight.integer / 2) + 
-		      (drawOrigin[1] /*/ thz_radarrange.integer*/),
-		   2,
-		   2,
-		   aliencolor);
-      }
-    }//for
-  }//radar
-  
-  
-  
-
-
-	//Draw human hp junk if thz_healthbar is on
-
-    /*
-	if ( thz_healthbar.integer > 0 )
-	{
-		for ( i = 0; i < cg.snap->numEntities; i++ )
-		{
-			cent = &cg_entities[ cg.snap->entities[i].number ];
-			if (cent->currentState.eType == ET_PLAYER)
-			{			
-				CG_hackDrawPlayerHealthBar( cent );
-			}			
-		}		
-	}
-	*/
-
-	
- //esp
- //
- //
-  /*
-  if( thz_esp.integer )
-  {
-    for ( i = 0; i < cg.snap->numEntities; i++ )
-    {
-      cent = &cg_entities[cg.snap->entities[i].number];
-      if  ((cent->currentState.modelindex2 == BIT_ALIENS) ||
-      	  (cent->currentState.modelindex2 == BIT_HUMANS))
-      {
-       CG_WorldToScreen( entityPositions.humanClientPos[i], &xb, &yb);
-       Com_sprintf(temp, "%s", cgs.clientinfo[cg.snap->entities[i].number);
-       CG_Text_Paint( x - w / 2, y, 0.25f, color_h, s, 0, 0, ITEM_TEXTSTYLE_NORMAL );
-      }
-    }
-  }
-  */
-}//func
 
 void VectorAngles(const vec3_t forward, vec3_t angles)
 {
@@ -1848,10 +1565,6 @@ int OGC_CheckFov(vec3_t origin)
 }
 void OGC_CheckVisible(centity_t * ent)
 {
-    aimVec_t *vec;
-    vec3_t axis[3];
-    trace_t t;
-
     if(!OGC_CheckFov(ent->lerpOrigin)) {
 	ent->infov=0;
 	ent->visible=0;

@@ -3374,6 +3374,7 @@ static void CG_Draw2D( void )
   CG_DrawFollow( );
   CG_DrawQueue( );
   CG_DrawTeamOverlay( );
+  thz_DrawScanner( );
 
   // don't draw center string if scoreboard is up
   cg.scoreBoardShowing = CG_DrawScoreboard( );
