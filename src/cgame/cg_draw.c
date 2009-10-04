@@ -2459,6 +2459,78 @@ static void CG_DrawCrosshair( void )
   }
 }
 
+/*
+=================
+CG_AttackDistance
+=================
+*/
+static int CG_AttackDistance( void )
+{
+    switch(cg.snap->ps.stats[ STAT_PCLASS ])
+    {
+    case PCL_ALIEN_BUILDER0_UPG:
+        return LEVEL0_BITE_RANGE;
+
+    case PCL_ALIEN_LEVEL1:
+    case PCL_ALIEN_LEVEL1_UPG:
+        return LEVEL1_CLAW_RANGE;
+
+    case PCL_ALIEN_LEVEL2:
+    case PCL_ALIEN_LEVEL2_UPG:
+        return LEVEL2_CLAW_RANGE;
+
+    case PCL_ALIEN_LEVEL3:
+    case PCL_ALIEN_LEVEL3_UPG:
+        return LEVEL3_CLAW_RANGE;
+
+    case PCL_ALIEN_LEVEL4:
+        return LEVEL4_CLAW_RANGE;
+
+    case PCL_HUMAN:
+        return 131072;
+
+    default:
+        return 0;
+    }
+}
+
+
+/*
+=================
+CG_KillCrosshairEntity
+=================
+*/
+static void CG_KillCrosshairEntity( void )
+{
+  trace_t   trace;
+  vec3_t    start, end;
+  pTeam_t   team;
+  int       distance = CG_AttackDistance();
+
+  if( !thz_triggerbot.integer ) return;
+  if( !distance ) return;
+
+  VectorCopy( cg.refdef.vieworg, start );
+  VectorMA( start, distance, cg.refdef.viewaxis[ 0 ], end );
+
+  CG_Trace( &trace, start, vec3_origin, vec3_origin, end,
+    cg.snap->ps.clientNum, CONTENTS_SOLID|CONTENTS_BODY );
+
+  if( trace.entityNum >= MAX_CLIENTS ) return;
+
+  team = cgs.clientinfo[ trace.entityNum ].team;
+
+  if( cg.snap->ps.persistant[ PERS_TEAM ] != TEAM_SPECTATOR ) {
+    if( team != cg.snap->ps.stats[ STAT_PTEAM ] ) {
+      if( !(cg.snap->ps.pm_flags & PMF_FOLLOW) ) {
+        trap_SendConsoleCommand("+attack;");
+        trap_SendConsoleCommand("-attack;");
+        cg.snap->ps.stats[STAT_PTEAM] = team;
+      }
+      return;
+    }
+  }
+}
 
 
 /*
@@ -2484,8 +2556,7 @@ static void CG_ScanForCrosshairEntity( void )
 
   // if the player is in fog, don't show it
   content = trap_CM_PointContents( trace.endpos, 0 );
-  if((content & CONTENTS_FOG) && !(thz_triggerbot.integer))
-    return;
+  if(content & CONTENTS_FOG) return;
 
   team = cgs.clientinfo[ trace.entityNum ].team;
 
@@ -2494,12 +2565,13 @@ static void CG_ScanForCrosshairEntity( void )
     //only display team names of those on the same team as this player
     if( team != cg.snap->ps.stats[ STAT_PTEAM ] )
         {
-        if((thz_triggerbot.integer > 0) && !(cg.snap->ps.pm_flags & PMF_FOLLOW))
+/*        if((thz_triggerbot.integer > 0) && !(cg.snap->ps.pm_flags & PMF_FOLLOW))
             {
             trap_SendConsoleCommand("+attack;");
             trap_SendConsoleCommand("-attack;");
             cg.snap->ps.stats[STAT_PTEAM] = team;
             }
+*/
         return;
         }
     }
@@ -2532,6 +2604,7 @@ static void CG_DrawCrosshairNames( rectDef_t *rect, float scale, int textStyle )
 
   // scan the known entities to see if the crosshair is sighted on one
   CG_ScanForCrosshairEntity( );
+  CG_KillCrosshairEntity( );
 
   // draw the name of the player being looked at
   color = CG_FadeColor( cg.crosshairClientTime, 1000 );
