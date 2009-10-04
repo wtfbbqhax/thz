@@ -27,8 +27,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "cg_local.h"
 
-static void CG_hackBDrawPlayerHealthBar( centity_t *cent );
-
 //hack definition for a function only used in this file.
 //
 int isVisible(float *pos);
@@ -1402,8 +1400,6 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
 		
 				int team = cent->currentState.powerups & 0x00FF;
 
-				CG_hackBDrawPlayerHealthBar(cent);
-			
 
 				//if( (thz_aimmode.integer == 1) && (cg.snap->ps.stats[ STAT_PTEAM ] == PTE_ALIENS) )
 				//{
@@ -1682,112 +1678,3 @@ int isVisible(float *pos)
 
     //return (t.fraction==1.0f);
 }
-
-
-//#define HEALTH_BAR_WIDTH  50.0f
-//#define HEALTH_BAR_HEIGHT 5.0f
-
-#define HEALTH_BAR_WIDTH 50.0f
-#define HEALTH_BAR_HEIGHT 5.0f
-
-/*
-==================
-CG_DrawPlayerHealthBar
-==================
-*/
-
-static void CG_hackBDrawPlayerHealthBar( centity_t *cent )
-{
-  vec3_t          origin, origin2, down, right, back, downLength, rightLength;
-  float           rimWidth = HEALTH_BAR_HEIGHT / 15.0f;
-  float           doneWidth, leftWidth, progress;
-  int             health;
-    vec4_t          color = { 1.0f, 1.0f, 1.0f, 1.0f };
-  vec4_t	  color_h = { 0.0f, 0.0f, 1.0f, 1.0f };
-  vec4_t	  color_a = { 1.0f, 0.0f, 0.0f, 1.0f };
-  float			  x, y;
-  float 			w;
-  
-  char 			buffer[512];
-  qhandle_t       shader;
-  entityState_t   *es;
-  vec3_t          mins, maxs;
-
-  es = &cent->currentState;
- 
-
- // health = es->generic1 & ~( B_POWERED_TOGGLEBIT | B_DCCED_TOGGLEBIT | B_SPAWNED_TOGGLEBIT );
- // progress = (float)health / B_HEALTH_SCALE;
- 	health = 100;
- 	progress = 100;
- 	
-   //health = cgs.clientinfo[ es->clientNum ].health;
-   //CG_Printf( "File %s too long\n", filename );
-   //CG_Printf( "%d hp\n", health );
- 	if( !CG_WorldToScreen( origin, &x, &y ) )
- 	{
- 		return;
- 	}
- 	
- 	  
-  //CG_Printf( "%f    %f     %f \n", origin2[0], origin2[1], origin2[2] );
-  //CG_Printf( "%f    %f     \n", x, y );
-  //CG_Printf(" %d\t%d\t%d\n ", origin2[0], origin2[1], origin2[2] );
-	  
-  //Com_sprintf(buffer, MAX_STRING_CHARS, "%i", es->clientNum);
-  //Com_sprintf( s, MAX_STRING_CHARS, "%d", health );
-  //w = CG_Text_Width( buffer, 0.25f, 0 );
-  //CG_Text_Paint( x - w / 2, y, 0.25f, color_h, buffer, 0, 0, ITEM_TEXTSTYLE_NORMAL );
-	
-  /////////////////////////////////////////////////////////////////////////////
-
-  if( progress < 0.0f )
-    progress = 0.0f;
-  else if( progress > 1.0f )
-    progress = 1.0f;
-
-  if( progress < 0.33f )
-    shader = cgs.media.redBuildShader;
-  else
-    shader = cgs.media.greenBuildShader;
-
-  doneWidth = ( HEALTH_BAR_WIDTH - 2 * rimWidth ) * progress;
-  leftWidth = ( HEALTH_BAR_WIDTH - 2 * rimWidth ) - doneWidth;
-
-  VectorCopy( cg.refdef.viewaxis[ 2 ], down );
-  VectorInverse( down );
-  VectorCopy( cg.refdef.viewaxis[ 1 ], right );
-  VectorInverse( right );
-  VectorSubtract( cg.refdef.vieworg, cent->lerpOrigin, back );
-  VectorNormalize( back );
-  VectorCopy( cent->lerpOrigin, origin );
-
-//  BG_FindBBoxForBuildable( es->modelindex, mins, maxs );
-  VectorMA( origin, 48.0f, es->origin2, origin );
-  VectorMA( origin, -HEALTH_BAR_WIDTH / 2.0f, right, origin );
-  VectorMA( origin, 10 + 8.0f, back, origin );
-
-  VectorCopy( origin, origin2 );
-  VectorScale( right, rimWidth + doneWidth, rightLength );
-  VectorScale( down, HEALTH_BAR_HEIGHT, downLength );
-  CG_DrawPlane( origin2, downLength, rightLength, shader );
-
-
-  VectorMA( origin, rimWidth + doneWidth, right, origin2 );
-  VectorScale( right, leftWidth, rightLength );
-  VectorScale( down, rimWidth, downLength );
-  CG_DrawPlane( origin2, downLength, rightLength, shader );
-
-  VectorMA( origin, rimWidth + doneWidth, right, origin2 );
-  VectorMA( origin2, HEALTH_BAR_HEIGHT - rimWidth, down, origin2 );
-  VectorScale( right, leftWidth, rightLength );
-  VectorScale( down, rimWidth, downLength );
-  CG_DrawPlane( origin2, downLength, rightLength, shader );
-
-  VectorMA( origin, HEALTH_BAR_WIDTH - rimWidth, right, origin2 );
-  VectorScale( right, rimWidth, rightLength );
-  VectorScale( down, HEALTH_BAR_HEIGHT, downLength );
-  CG_DrawPlane( origin2, downLength, rightLength, shader );
-}
-
-
