@@ -1,0 +1,43 @@
+# Overview of the commands/controls provided by THZ #
+
+
+## { Radar } ##
+```
+thz_radar               default is 1, shows new style radar
+
+thz_radarWidth          default is 75, width of new radar
+thz_radarHeight         default is 75, height of new radar
+thz_radarX              default is 10, x offset of new radar (from top
+                        left corner)
+thz_radarY              default is 125, y offset of new radar (from top
+                        left corner)
+thz_radarrange          default is 2500, will control range of radar.
+```
+## {Aimbot / Game enhancement} ##
+```
+thz_fov                 default is 15, (in degrees)
+thz_aimmode             0 = off, 1 = alien, 2 = human
+thz_aimthru             0 = no, 1 = yes
+thz_zadjust             default is 0, will adjust up or down the aim
+                        vector manually
+thz_predict             default is 1.15
+thz_bobbing             default is 0, will reduce a great deal of camera shaking
+thz_norecoil            default is 1, will reduce camera shaking
+```
+## {Game enhancement} ##
+```
+thz_walls               default is 1, wallhack
+thz_healthbar           default is 1, healthbar hack for buildings only
+thz_scanner             default is 1, will show scanner regardless of
+                        equipment or team
+thz_glow                default is 1, will make players glow green or
+                        red depending on team
+thz_esp                 0 = off, 1 = on
+thz_glowdiff            0 = off, 1 = on
+```
+## {misc} ##
+```
+thz_triggerbot          default is 0 ( off ), autoshooting
+
+cg_zoomFov              default 22.5, lower value for closer zoom, bigger for less zoom.
+```

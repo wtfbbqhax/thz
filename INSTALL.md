@@ -1,0 +1,23 @@
+### As of Dec 09, 2008 ###
+
+# INSTALLING #
+
+  1. If you wish to use lord.undergamers original client, then you can find it in the Downloads section as _thz4.2.zip_. From there you just need to follow the Directions that are inside the zip archive.
+  1. Otherwise, you now have the option of just downloading the hacked _vms-1.1.0.pk3_ and replacing your existing one with it, this option is **_universal_** meaning that it will work with **_any_** client.
+
+
+# If You Choose the 2nd Solution #
+
+  1. Go to the Downloads section and download _vms-1.1.0.pk3_  This is our hacked pk3/zip file containing the _THZ CGAME_
+  1. Go to your _Tremulous_ installation path then go to _base_ and replace the current _vms-1.1.0.pk3_ with the hacked _vms-1.1.0.pk3_
+  1. Turn on tremulous and try out a server.
+
+
+### Troubleshooting ###
+
+  1. If you go to a server and you don't have any of the THZ hacks then you may have more than one vms pk3. This had happened to me on my windows client where some server I played on Installed it.
+  1. ~~If you go to a server and you get an error saying **_invalid pk3_** then **email me immediately** . This would be a bug that I already understand it may occur in which case I need to rewrite my _Spoofer_~~ <- This is not an issue
+
+
+### Quick Note ###
+> Some servers are utilizing, what I believe to be, a beta CGAME for the upcoming version of Tremulous. In this case your client may go crazy and shoot a bunch of error messages pertaining about some functions within THZ. Until this becomes a serious problem I will not be addressing it.
